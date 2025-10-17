@@ -1,0 +1,75 @@
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #e0f2fe 0%, #bae6fd 40%, #93c5fd 100%);
+  padding: 2rem;
+}
+
+.card {
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2.75rem 2.25rem;
+  border-radius: 1.25rem;
+  background-color: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+  box-shadow: 0 20px 55px rgba(15, 23, 42, 0.35);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.heading h1 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+}
+
+.heading p {
+  font-size: 1rem;
+  color: rgba(241, 245, 249, 0.8);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.link {
+  color: #bfdbfe;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.logoutButton {
+  padding: 0.85rem 1.4rem;
+  border-radius: 0.75rem;
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #f8fafc;
+  cursor: pointer;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.logoutButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.logoutButton:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.errorMessage {
+  margin-top: 0.75rem;
+  color: #fecdd3;
+  font-size: 0.9rem;
+}
