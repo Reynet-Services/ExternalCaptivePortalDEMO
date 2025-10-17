@@ -1,95 +1,100 @@
-import Image from "next/image";
+"use client";
+
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+export default function LoginPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        const { error: message } = await response.json();
+        setError(message ?? "No pudimos iniciar sesión");
+        return;
+      }
+
+      setUsername("");
+      setPassword("");
+      router.push("/welcome");
+    } catch (submitError) {
+      setError("Ocurrió un problema al conectar con el servicio");
+      console.error(submitError);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isDisabled = loading || !username || !password;
+
+  return (
+    <div className={styles.wrapper}>
+      <section className={styles.card}>
+        <header className={styles.header}>
+          <h1>Acceso</h1>
+          <p>Ingresa tus credenciales para continuar.</p>
+        </header>
+
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <label className={styles.label} htmlFor="username">
+            Usuario
+          </label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
+            placeholder="demo"
+            className={styles.input}
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+
+          <label className={styles.label} htmlFor="password">
+            Contraseña
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            placeholder="demo123"
+            className={styles.input}
           />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+          {error ? <p className={styles.error}>{error}</p> : null}
+
+          <button className={styles.button} type="submit" disabled={isDisabled}>
+            {loading ? "Validando..." : "Ingresar"}
+          </button>
+        </form>
+
+        <footer className={styles.footer}>
+          <p>
+            Usa <strong>demo</strong> y <strong>demo123</strong> para el acceso
+            de prueba.
+          </p>
+        </footer>
+      </section>
     </div>
   );
 }
